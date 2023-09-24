@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using _Scripts.Configs;
+using _Scripts.Game.InventorySystem;
 using _Scripts.Services.DataService;
 using _Scripts.Services.PauseService;
 using _Scripts.Services.StateMachines.LevelStateMachine;
@@ -13,13 +16,16 @@ namespace _Scripts.Game
         private ILevelStateMachine _levelStateMachine;
         private IDataReader _dataReader;
         private PauseHandler _pauseHandler;
+        private Inventory _inventory;
 
         [Inject]
         private void Construct(
             ILevelStateMachine levelStateMachine,
             IDataReader dataReader,
-            PauseHandler pauseHandler)
+            PauseHandler pauseHandler,
+            Inventory inventory)
         {
+            _inventory = inventory;
             _levelStateMachine = levelStateMachine;
             _dataReader = dataReader;
             _pauseHandler = pauseHandler;
@@ -28,6 +34,7 @@ namespace _Scripts.Game
         private void Start()
         {
             InitLevelStates();
+            
             _levelStateMachine.ChangeState<LevelStartState>();
         }
 

@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
+using _Scripts.Configs;
+using _Scripts.Game.InventorySystem;
+using UnityEngine;
 
 namespace _Scripts.Services.DataService
 {
     [Serializable]
     public class GameData
     {
-        public float Volume = 0;
-        public float Level = 0;
+        public List<InventorySlot> Slots = new List<InventorySlot>();
+        public bool IsFirstLaunch = true;
     }
 }

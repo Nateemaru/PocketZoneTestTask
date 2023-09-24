@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 161c4b93fa8e442c973463bcfd344ca0, type: 3}
   m_Name: BulletproofCloak
   m_EditorClassIdentifier: 
+  _itemType: 0
+  _equipType: 3
   _Id: BulletproofCloak
   _icon: {fileID: 21300000, guid: d811afb0d42fed140806f31df436fbda, type: 3}
   _prefab: {fileID: 5724401901788453636, guid: dd4e34e8b29d04a4f92a8e43318e095f, type: 3}
+  _canRemove: 1
   _armor: 10

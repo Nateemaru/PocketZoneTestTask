@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 161c4b93fa8e442c973463bcfd344ca0, type: 3}
   m_Name: BulletproofCloakWrist
   m_EditorClassIdentifier: 
+  _itemType: 0
+  _equipType: 5
   _Id: BulletproofCloakWrist
   _icon: {fileID: 21300000, guid: 0e06a0418c1fb7a4abedb03ea9c66359, type: 3}
   _prefab: {fileID: 3380047246776443938, guid: 406ea4462a150f148a0cd68d2920667e, type: 3}
+  _canRemove: 1
   _armor: 1

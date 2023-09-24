@@ -11,34 +11,38 @@ namespace _Scripts.Game.InventorySystem
     public sealed class Inventory
     {
         private List<InventorySlot> _slots = new List<InventorySlot>();
-        public bool WasInitialized { get; private set; }
         private ItemsContainerConfig _itemsContainerConfig;
         private InventoryView _inventoryView;
+        private EquipmentInventoryView _equipmentInventoryView;
         private IDataReader _dataReader;
+        private List<EquipmentSlot> _equipmentSlots = new List<EquipmentSlot>();
 
-        public event Action OnInitialized;
+        public event Action OnEquipmentChange;
 
-        public Inventory(ItemsContainerConfig itemsContainerConfig, InventoryView inventoryView, IDataReader dataReader)
+        public Inventory(
+            ItemsContainerConfig itemsContainerConfig, 
+            InventoryView inventoryView, 
+            EquipmentInventoryView equipmentInventoryView,
+            IDataReader dataReader)
         {
             _itemsContainerConfig = itemsContainerConfig;
             _inventoryView = inventoryView;
+            _equipmentInventoryView = equipmentInventoryView;
             _dataReader = dataReader;
 
             _slots = _dataReader.GetData().Slots;
-            _inventoryView.OnInitialized += DisplaySlots;
+            _equipmentSlots = _dataReader.GetData().EquipmentSlots;
+            _inventoryView.OnInitialized += 
+                () => inventoryView.DisplaySlots(_slots.ToArray());
+            _equipmentInventoryView.OnInitialized +=
+                () =>
+                {
+                    _equipmentInventoryView.DisplaySlots(_equipmentSlots.ToArray());
+                    OnEquipmentChange?.Invoke();
+                };
         }
 
-        private void DisplaySlots()
-        {
-            foreach (InventorySlot slot in _slots)
-            {
-                BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == slot.ItemID);
-                string amount = slot.Count <= 1 ? "" : slot.Count.ToString();
-                _inventoryView.SlotsView.First(view => !view.IsReserved).SetData(itemConfig.Icon, amount);
-            }
-        }
-
-        private BaseItemConfig GetItem(string ID)
+        public TConfig GetItem<TConfig>(string ID) where TConfig : BaseItemConfig
         {
             BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == ID);
             
@@ -56,46 +60,106 @@ namespace _Scripts.Game.InventorySystem
                 }
             }
 
-            return itemConfig;
+            return itemConfig as TConfig;
+        }
+        
+        public TConfig GetEquip<TConfig>(EquipType equipType) where TConfig : BaseItemConfig
+        {
+            foreach (EquipmentSlot slot in _equipmentSlots)
+            {
+                if (slot.EquipType == equipType)
+                {
+                    BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == slot.ItemID);
+                    return itemConfig as TConfig;
+                }
+            }
+
+            return null;
         }
 
         public void AddItem(string itemID)
         {
+            InventorySlot existingSlot = _slots.FirstOrDefault(slot => slot.ItemID == itemID);
+
+            if (existingSlot != null)
+            {
+                existingSlot.Count++;
+            }
+            else
+            {
+                InventorySlot newSlot = new InventorySlot(itemID);
+                _slots.Add(newSlot);
+            }
+
+            ApplyChanges();
+        }
+
+        public void RemoveItem(string itemID, bool equipping = false)
+        {
+            BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == itemID);
+
+            if (!itemConfig.CanRemove && !equipping)
+            {
+                return;
+            }
+            
             foreach (InventorySlot slot in _slots)
             {
                 if (slot.ItemID == itemID)
                 {
-                    slot.Count++;
-                    return;
+                    slot.Count--;
+
+                    if (slot.Count < 1)
+                    {
+                        _slots.Remove(slot);
+                        break;
+                    }
                 }
             }
             
-            InventorySlot newSlot = new InventorySlot(itemID);
-            _slots.Add(newSlot);
+            ApplyChanges();
         }
 
-        public void Init(List<InventorySlot> slots = null)
+        private void ApplyChanges()
         {
-            if (slots != null && slots.Count > 0)
+            _dataReader.GetData().Slots = _slots;
+            _dataReader.GetData().EquipmentSlots = _equipmentSlots;
+            _dataReader.SaveData();
+            _inventoryView.DisplaySlots(_slots.ToArray());
+        }
+
+        public void EquipItem(string itemID)
+        {
+            BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == itemID);
+            RemoveItem(itemID, true);
+            _equipmentInventoryView.SetEquip(itemConfig, itemConfig.EquipType);
+            EquipmentSlot equipmentSlot = _equipmentSlots.Find(item => item.EquipType == itemConfig.EquipType);
+            
+            if (equipmentSlot != null)
             {
-                _slots = slots;
+                InventorySlot existingSlot = _slots.FirstOrDefault(slot => slot.ItemID == equipmentSlot.ItemID);
+
+                if (existingSlot != null)
+                {
+                    existingSlot.Count++;
+                }
+                else
+                {
+                    InventorySlot newSlot = new InventorySlot(equipmentSlot.ItemID);
+                    _slots.Add(newSlot);
+                }
+                
+                _equipmentSlots.Remove(equipmentSlot);
             }
-
-            WasInitialized = true;
-            OnInitialized?.Invoke();
+            
+            _equipmentSlots.Add(new EquipmentSlot(itemConfig.ID, itemConfig.EquipType));
+            OnEquipmentChange?.Invoke();
+            ApplyChanges();
         }
-    }
 
-    [Serializable]
-    public class InventorySlot
-    {
-        public string ItemID;
-        public int Count;
-
-        public InventorySlot(string itemID)
+        public void UseItem(string itemID)
         {
-            ItemID = itemID;
-            Count = 1;
+            
         }
     }
 }

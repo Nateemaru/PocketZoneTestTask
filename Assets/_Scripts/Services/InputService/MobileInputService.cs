@@ -19,7 +19,7 @@ namespace _Scripts.Services.InputService
 
         private void Update()
         {
-            if (Input.touchCount > 0)
+            if (Input.touchCount > 0 || Input.GetMouseButton(0))
             {
                 _direction = new Vector3(_joystick.Direction.x, _joystick.Direction.y);
             }

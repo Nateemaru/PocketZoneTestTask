@@ -12,7 +12,7 @@ namespace _Scripts.UI
         
         public bool IsPressed { get; private set; }
 
-        private void Start()
+        protected virtual void Start()
         {
             _button = GetComponent<Button>();
             _button.onClick.AddListener(OnClick);

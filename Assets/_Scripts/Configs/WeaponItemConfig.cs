@@ -1,4 +1,5 @@
 using System;
+using _Scripts.Game.InventorySystem;
 using UnityEngine;
 
 namespace _Scripts.Configs
@@ -9,7 +10,7 @@ namespace _Scripts.Configs
         [SerializeField] private GameObject _bulletPrefab;
         [SerializeField] private  float _shootingRate;
         [SerializeField] private  int _holderCapacity;
-
+        
         public GameObject BulletPrefab => _bulletPrefab;
         public float ShootingRate => _shootingRate;
         public int HolderCapacity => _holderCapacity;

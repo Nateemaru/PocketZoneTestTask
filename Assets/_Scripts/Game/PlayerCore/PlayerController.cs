@@ -1,13 +1,7 @@
-using System;
 using _Scripts.Configs;
-using _Scripts.Factories;
 using _Scripts.Game.AI;
 using _Scripts.Game.InventorySystem;
-using _Scripts.Game.PlayerCore.PlayerStates;
-using _Scripts.Services.InputService;
-using _Scripts.Services.StateMachines;
-using _Scripts.Utilities;
-using DG.Tweening;
+using _Scripts.Services.DataService;
 using UnityEngine;
 using Zenject;
 
@@ -15,36 +9,40 @@ namespace _Scripts.Game.PlayerCore
 {
     [RequireComponent(typeof(PlayerMoving))]
     [RequireComponent(typeof(PlayerShooting))]
-    public class PlayerController : MonoBehaviour
+    [RequireComponent(typeof(HealthComponent))]
+    public class PlayerController : MonoBehaviour, ITarget
     {
-        private BaseInputService _inputService;
-        private PlayerInfo _playerInfo;
-        private UnitStateMachine _stateMachine;
         private PlayerMoving _playerMoving;
         private PlayerShooting _playerShooting;
+        private HealthComponent _healthComponent;
         private Inventory _inventory;
+        private IDataReader _dataReader;
+
+        public bool IsDead { get; private set; }
 
         [Inject]
-        private void Construct(BaseInputService inputService, Inventory inventory)
+        private void Construct(Inventory inventory, IDataReader dataReader)
         {
-            _inputService = inputService;
             _inventory = inventory;
+            _dataReader = dataReader;
         }
 
         private void Start()
         {
             _playerMoving = GetComponent<PlayerMoving>();
             _playerShooting = GetComponent<PlayerShooting>();
-            _stateMachine = new UnitStateMachine();
+            _healthComponent = GetComponent<HealthComponent>();
+            _inventory.OnEquipmentChange += () =>
+            {
+                _playerShooting.SetWeapon(_inventory.GetEquip<WeaponItemConfig>(EquipType.Weapon));
+            };
             
-            _stateMachine.AddAnyTransition(new PlayerIdleState(this), 
-                () => !_inputService.IsFireButton() && !_playerMoving.IsMoving);
-            _stateMachine.AddAnyTransition(new PlayerMoveState(this), 
-                () => _playerMoving.IsMoving);
-            _stateMachine.AddAnyTransition(new PlayerAttackState(this), 
-                () => _inputService.IsFireButton());
-            _stateMachine.AddAnyTransition(new PlayerMoveAttackState(this), 
-                () => _inputService.IsFireButton() && _playerMoving.IsMoving);
+            _healthComponent.Initialize(_dataReader.GetData().PlayerInfo.HP);
+            _healthComponent.OnHealthChanged += () =>
+            {
+                _dataReader.GetData().PlayerInfo.HP = _healthComponent.CurrentHp;
+                _dataReader.SaveData();
+            };
         }
 
         private void Update()
@@ -65,6 +63,11 @@ namespace _Scripts.Game.PlayerCore
                     break;
                 }
             }
+        }
+
+        public Transform GetTransform()
+        {
+            return transform;
         }
     }
 }

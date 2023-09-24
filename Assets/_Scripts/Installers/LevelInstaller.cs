@@ -1,5 +1,7 @@
 using _Scripts.Factories;
 using _Scripts.Game.InventorySystem;
+using _Scripts.Game.PlayerCore;
+using _Scripts.Services;
 using _Scripts.Services.InputService;
 using _Scripts.Services.StateMachines.LevelStateMachine;
 using _Scripts.UI;
@@ -19,6 +21,36 @@ namespace _Scripts.Installers
             BindInputService();
             BindInventory();
             BindInventoryView();
+            BindEquipmentInventoryView();
+            BindPlayer();
+            BindEnemiesHasher();
+        }
+
+        private void BindEnemiesHasher()
+        {
+            Container
+            .Bind<EnemiesHasher>()
+            .FromNew()
+            .AsSingle()
+            .NonLazy();
+        }
+
+        private void BindPlayer()
+        {
+            Container
+                .BindInterfacesAndSelfTo<PlayerController>()
+                .FromComponentsInHierarchy()
+                .AsSingle()
+                .NonLazy();
+        }
+
+        private void BindEquipmentInventoryView()
+        {
+            Container
+            .Bind<EquipmentInventoryView>()
+            .FromComponentInHierarchy()
+            .AsSingle()
+            .NonLazy();
         }
 
         private void BindInventoryView()

@@ -38,19 +38,15 @@ namespace _Scripts.Game
 
         private void HandleFirstLaunch()
         {
-            if (_dataReader.GetData().Slots.Count <= 0)
+            foreach (BaseItemConfig item in _defaultItems)
             {
-                foreach (BaseItemConfig item in _defaultItems)
+                if (item.ItemType == ItemType.Equip)
                 {
-                    foreach (InventorySlot slot in _dataReader.GetData().Slots)
-                    {
-                        if (slot.ItemID == item.ID)
-                        {
-                            slot.Count++;
-                            break;
-                        }
-                    }
-                    
+                    EquipmentSlot newSlot = new EquipmentSlot(item.ID, item.EquipType);
+                    _dataReader.GetData().EquipmentSlots.Add(newSlot);
+                }
+                else
+                {
                     InventorySlot newSlot = new InventorySlot(item.ID);
                     _dataReader.GetData().Slots.Add(newSlot);
                 }

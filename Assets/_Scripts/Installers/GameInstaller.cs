@@ -1,11 +1,7 @@
-using System.Collections.Generic;
 using _Scripts.Configs;
-using _Scripts.Game.InventorySystem;
 using _Scripts.Services;
-using _Scripts.Services.AudioService;
 using _Scripts.Services.CoroutineRunnerService;
 using _Scripts.Services.DataService;
-using _Scripts.Services.PauseService;
 using _Scripts.Services.SceneLoadService;
 using UnityEngine;
 using Zenject;
@@ -21,7 +17,6 @@ namespace _Scripts.Installers
             BindStorage();
             BindDataReader();
             BindSceneLoadService();
-            BindPauseHandler();
             BindCoroutineRunner();
             BindFPSUnlocker();
             BindItemsContainerConfig();
@@ -70,15 +65,6 @@ namespace _Scripts.Installers
             Container
                 .Bind<IStorageService>()
                 .To<JsonToFileStorage>()
-                .FromNew()
-                .AsSingle()
-                .NonLazy();
-        }
-
-        private void BindPauseHandler()
-        {
-            Container
-                .Bind<PauseHandler>()
                 .FromNew()
                 .AsSingle()
                 .NonLazy();

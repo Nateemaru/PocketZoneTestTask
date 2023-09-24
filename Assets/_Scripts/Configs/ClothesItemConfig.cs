@@ -1,3 +1,4 @@
+using _Scripts.Game.InventorySystem;
 using UnityEngine;
 
 namespace _Scripts.Configs

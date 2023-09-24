@@ -18,8 +18,10 @@ namespace _Scripts.Game.PlayerCore
         private BaseInputService _inputService;
         private GameObjectFactory _gameObjectFactory;
         private WeaponItemConfig _weaponConfig;
-        private int _holderBulletsLeft;
+        private int _bulletsInHolder;
+        
         public bool IsReloading { get; private set; }
+        public int BulletsInHolder => _bulletsInHolder;
 
         [Inject]
         private void Construct(BaseInputService inputService, GameObjectFactory gameObjectFactory)
@@ -34,7 +36,7 @@ namespace _Scripts.Game.PlayerCore
             {
                 _shootingTimer.UpdateTimer();
 
-                if (_holderBulletsLeft <= 0)
+                if (_bulletsInHolder <= 0)
                 {
                     StartCoroutine(Reload());
                     return;
@@ -44,7 +46,7 @@ namespace _Scripts.Game.PlayerCore
                 {
                     Shoot();
                     _shootingTimer.ResetTimer();
-                    _holderBulletsLeft--;
+                    _bulletsInHolder--;
                 }
             }
         }
@@ -55,7 +57,7 @@ namespace _Scripts.Game.PlayerCore
             {
                 IsReloading = true;
                 yield return new WaitForSeconds(2);
-                _holderBulletsLeft = _weaponConfig.HolderCapacity;
+                _bulletsInHolder = _weaponConfig.HolderCapacity;
                 IsReloading = false;
             }
         }
@@ -69,9 +71,19 @@ namespace _Scripts.Game.PlayerCore
 
         public void SetWeapon(WeaponItemConfig weaponConfig)
         {
+            /*if (_firePoint.childCount > 0)
+            {
+                for (int i = 0; i < _firePoint.childCount; i++)
+                {
+                    Destroy(_firePoint.GetChild(i).gameObject);
+                }
+            }*/
+            
             _weaponConfig = weaponConfig;
             _shootingTimer = new Timer(_weaponConfig.ShootingRate, true);
-            _holderBulletsLeft = _weaponConfig.HolderCapacity;
+            _bulletsInHolder = _weaponConfig.HolderCapacity;
+            /*GameObject weaponModel = Instantiate(weaponConfig.Prefab, _firePoint.position, _firePoint.rotation);
+            weaponModel.transform.parent = _firePoint;*/
         }
     }
 }

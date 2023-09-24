@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 161c4b93fa8e442c973463bcfd344ca0, type: 3}
   m_Name: BanditPants
   m_EditorClassIdentifier: 
+  _itemType: 0
+  _equipType: 4
   _Id: BanditPants
   _icon: {fileID: 21300000, guid: 25c2a3f0b6bbd5e438f53bf9aa8b4c74, type: 3}
   _prefab: {fileID: 646821234981568930, guid: 26fc001118bf30c4c92af6e3f328b06a, type: 3}
+  _canRemove: 1
   _armor: 2

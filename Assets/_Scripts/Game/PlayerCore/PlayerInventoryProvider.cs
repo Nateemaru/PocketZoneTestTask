@@ -17,7 +17,11 @@ namespace _Scripts.Game.PlayerCore
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            
+            if (other.TryGetComponent(out PickableItem item))
+            {
+                _inventory.AddItem(item.ItemConfig.ID);
+                Destroy(other.gameObject);
+            }
         }
     }
 }

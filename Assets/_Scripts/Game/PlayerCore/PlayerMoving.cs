@@ -61,10 +61,6 @@ namespace _Scripts.Game.PlayerCore
         
         private void RotateTowards(Vector3 targetDirection)
         {
-            float angle = Mathf.Atan2(targetDirection.x, -targetDirection.y) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(new Vector3(0, 0, angle));
-            _hand.rotation = Quaternion.Slerp(_hand.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-            
             switch (targetDirection.x)
             {
                 case < 0:
@@ -82,6 +78,13 @@ namespace _Scripts.Game.PlayerCore
                     }
                     break;
             }
+            
+            float flipFactor = IsFacingRight ? 1.0f : -1.0f;
+            float angle = Mathf.Atan2(targetDirection.x, targetDirection.y * flipFactor) * Mathf.Rad2Deg;
+            float currentXRotation = _hand.rotation.eulerAngles.x;
+            float currentYRotation = _hand.rotation.eulerAngles.y;
+            Quaternion targetRotation = Quaternion.Euler(new Vector3(currentYRotation, currentXRotation, angle));
+            _hand.rotation = Quaternion.Slerp(_hand.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
 
         public void SetLookDirection(Vector3 lookDirection) => _lookDirection = lookDirection;

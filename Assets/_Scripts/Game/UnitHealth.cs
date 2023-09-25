@@ -15,10 +15,10 @@ namespace _Scripts.Game
                 _rb = rigidbody;
         }
 
-        public override void Initialize(float value)
+        public override void Initialize(float maxHp, float currentHp)
         {
-            _maxHp = value;
-            _currentHp = value;
+            _maxHp = maxHp;
+            _currentHp = currentHp;
             OnHealthChanged?.Invoke();
         }
 

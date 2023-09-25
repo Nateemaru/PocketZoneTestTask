@@ -39,8 +39,8 @@ namespace _Scripts.Game.PlayerCore
         {
             if (itemConfig != null && container != null)
             {
-                GameObject weaponModel = Instantiate(itemConfig.Prefab, container.position, container.rotation);
-                weaponModel.transform.parent = container;
+                GameObject model = Instantiate(itemConfig.Prefab, container.position, container.rotation);
+                model.transform.parent = container;
             }
         }
 
@@ -66,12 +66,14 @@ namespace _Scripts.Game.PlayerCore
         private void EquipHead()
         {
             ClearIfExist(_headPlace);
+            
             Equip(_inventory.GetEquip<BaseItemConfig>(EquipType.Head), _headPlace);
         }
 
         private void EquipLegs()
         {
             ClearIfExistArray(_legsPlace);
+            
             for (int i = 0; i < _legsPlace.Length; i++)
             {
                 Equip(_inventory.GetEquip<BaseItemConfig>(EquipType.Legs), _legsPlace[i]);
@@ -81,12 +83,14 @@ namespace _Scripts.Game.PlayerCore
         private void EquipBody()
         {
             ClearIfExist(_bodyPlace);
+            
             Equip(_inventory.GetEquip<BaseItemConfig>(EquipType.Body), _bodyPlace);
         }
 
         private void EquipHands()
         {
             ClearIfExistArray(_handsPlace);
+            
             for (int i = 0; i < _handsPlace.Length; i++)
             {
                 Equip(_inventory.GetEquip<BaseItemConfig>(EquipType.Hands), _handsPlace[i]);

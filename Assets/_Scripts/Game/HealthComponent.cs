@@ -18,7 +18,7 @@ namespace _Scripts.Game
         public Action OnDeadAction;
         public Action OnHealthChanged;
 
-        public abstract void Initialize(float hp);
+        public abstract void Initialize(float maxHp, float currentHp);
         public abstract void ApplyDamage(float damage, Action callback = null);
         public abstract void Kill(Action callback = null);
         public abstract bool HasBeenDamaged();

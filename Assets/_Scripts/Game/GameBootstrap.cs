@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _Scripts.Configs;
 using _Scripts.Game.InventorySystem;
+using _Scripts.Game.PlayerCore;
 using _Scripts.Services;
 using _Scripts.Services.DataService;
 using _Scripts.Services.SceneLoadService;
@@ -13,6 +14,7 @@ namespace _Scripts.Game
     public class GameBootstrap : MonoBehaviour
     {
         [SerializeField] private BaseItemConfig[] _defaultItems;
+        [SerializeField] private PlayerConfig _playerConfig;
 
         private IDataReader _dataReader;
         private ISceneLoadService _sceneLoadService;
@@ -38,6 +40,10 @@ namespace _Scripts.Game
 
         private void HandleFirstLaunch()
         {
+            PlayerInfo playerInfo = new PlayerInfo();
+            playerInfo.PlayerStats = _playerConfig.PlayerStats;
+            playerInfo.CurrentHp = _playerConfig.PlayerStats.Health;
+            _dataReader.GetData().PlayerInfo = playerInfo;
             foreach (BaseItemConfig item in _defaultItems)
             {
                 if (item.ItemType == ItemType.Equip)

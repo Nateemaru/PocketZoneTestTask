@@ -1,4 +1,6 @@
 using _Scripts.Factories;
+using _Scripts.Game;
+using _Scripts.Game.AI;
 using _Scripts.Game.InventorySystem;
 using _Scripts.Game.PlayerCore;
 using _Scripts.Services;
@@ -24,6 +26,38 @@ namespace _Scripts.Installers
             BindEquipmentInventoryView();
             BindPlayer();
             BindEnemiesHasher();
+            BindAmmoHandler();
+            BindDropHandler();
+            BindEnemyFactory();
+        }
+
+        private void BindEnemyFactory()
+        {
+            Container
+            .BindFactory<GameObject, BaseEnemy, BaseEnemy.Factory>()
+            .FromFactory<EnemyFactory>()
+            .WhenInjectedInto(new []
+            {
+                typeof(LevelBootstrap),
+            });
+        }
+
+        private void BindDropHandler()
+        {
+            Container
+                .Bind<DropHandler>()
+                .FromNew()
+                .AsSingle()
+                .NonLazy();
+        }
+
+        private void BindAmmoHandler()
+        {
+            Container
+                .BindInterfacesAndSelfTo<PlayerShootment>()
+                .FromComponentInHierarchy()
+                .AsSingle()
+                .NonLazy();
         }
 
         private void BindEnemiesHasher()

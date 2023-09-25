@@ -6,7 +6,7 @@ using Zenject;
 namespace _Scripts.Game.PlayerCore
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    public class PlayerMoving : MonoBehaviour
+    public class PlayerMovement : MonoBehaviour
     {
         [SerializeField] private float _speed;
         [SerializeField] private float _rotationSpeed;
@@ -36,13 +36,13 @@ namespace _Scripts.Game.PlayerCore
 
             if (IsMoving)
             {
-                Vector3 direction = _lookDirection == Vector3.zero ? _inputService.GetDirection() : _lookDirection;
+                Vector3 direction = (_lookDirection == Vector3.zero) ? _inputService.GetDirection() : _lookDirection;
                 RotateTowards(direction);
             }
             else
             {
                 IsMoving = false;
-                _rb.velocity = Vector2.zero;
+                _rb.velocity = Vector3.zero;
             }
         }
 

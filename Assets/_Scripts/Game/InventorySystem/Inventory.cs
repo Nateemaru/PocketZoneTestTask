@@ -94,15 +94,8 @@ namespace _Scripts.Game.InventorySystem
             ApplyChanges();
         }
 
-        public void RemoveItem(string itemID, bool equipping = false)
+        public void RemoveItem(string itemID)
         {
-            BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == itemID);
-
-            if (!itemConfig.CanRemove && !equipping)
-            {
-                return;
-            }
-            
             foreach (InventorySlot slot in _slots)
             {
                 if (slot.ItemID == itemID)
@@ -131,7 +124,7 @@ namespace _Scripts.Game.InventorySystem
         public void EquipItem(string itemID)
         {
             BaseItemConfig itemConfig = _itemsContainerConfig.ItemsConfigs.First(item => item.ID == itemID);
-            RemoveItem(itemID, true);
+            RemoveItem(itemID);
             _equipmentInventoryView.SetEquip(itemConfig, itemConfig.EquipType);
             EquipmentSlot equipmentSlot = _equipmentSlots.Find(item => item.EquipType == itemConfig.EquipType);
             

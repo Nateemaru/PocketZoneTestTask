@@ -34,7 +34,7 @@ namespace _Scripts.UI
             gameObject.SetActive(true);
             _targetItemConfig = itemConfig;
 
-            _removeButton.gameObject.SetActive(_targetItemConfig.CanRemove);
+            _removeButton.gameObject.SetActive(true);
 
             switch (_targetItemConfig.ItemType)
             {

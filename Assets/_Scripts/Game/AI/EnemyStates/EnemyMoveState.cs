@@ -9,17 +9,19 @@ namespace _Scripts.Game.AI.EnemyStates
         private BaseEnemy _context;
         private ITarget _target;
         private bool _isRightFacing;
+        private float _speed;
 
-        public EnemyMoveState(BaseEnemy context, ITarget target)
+        public EnemyMoveState(BaseEnemy context, ITarget target, float speed)
         {
             _context = context;
             _target = target;
+            _speed = speed;
         }
 
         public void Update()
         {
             Vector2 direction = _target.GetTransform().position - _context.transform.position;
-            _context.transform.Translate(direction.normalized * (2 * Time.deltaTime), Space.World);
+            _context.transform.Translate(direction.normalized * (_speed * Time.deltaTime), Space.World);
             switch (direction.x)
             {
                 case < 0:

@@ -12,12 +12,12 @@ namespace _Scripts.Game.AI
             _stateMachine = new UnitStateMachine();
             _stateMachine.AddAnyTransition(new EnemyIdleState(this), 
                 () => _health.CurrentHp > 0 && !_isProvoked);
-            _stateMachine.AddAnyTransition(new EnemyMoveState(this, _target), 
+            _stateMachine.AddAnyTransition(new EnemyMoveState(this, _target, _speed), 
                 () => _health.CurrentHp > 0 
                       && _isProvoked
                       && (!transform.IsTargetNearby(_target.GetTransform(), _attackDistance) 
                           || !transform.IsTargetInSight(_target.GetTransform(), _fov)));
-            _stateMachine.AddAnyTransition(new EnemyAttackState(this, _target),
+            _stateMachine.AddAnyTransition(new EnemyAttackState(this, _target, _damage, _attackRate, _attackDistance, _fov),
                 () =>
                     _health.CurrentHp > 0
                     && _isProvoked
